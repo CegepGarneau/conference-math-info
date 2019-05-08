@@ -14,50 +14,12 @@ namespace ReseauNeurone
     /// <see cref="https://becominghuman.ai/making-a-simple-neural-network-2ea1de81ec20"/>
     class Program
     {
-        private static readonly double[] RECOMPENSES = new double[] { 0, 0, 1, 1 };
-
-        private const double CIBLE              = 2;
+        /// <summary>
+        /// Modifie la vitesse à laquelle l'apprentissage se fait. Doit être positif.
+        /// </summary>
         private const double TAUX_APPRENTISSAGE = 0.1;
 
         private static readonly Random Rnd = new Random();
-
-        /// <summary>
-        /// Evalue l'a précision d'un ensemble de poids, en donnant l'erreur par rapport à la cible.
-        /// </summary>
-        /// <param name="p">Des poids</param>
-        /// <returns>Une récompense en fonction des poids donnés dans p</returns>
-        private static double Evaluer(double[] p)
-        {
-            return CalculerErreur(CIBLE, Recompenser(p));
-        }
-
-        /// <summary>
-        /// Donne une récompense en fonction de poids donnés
-        /// </summary>
-        /// <param name="p">Des poids</param>
-        /// <returns>Une récompense en fonction des poids donnés dans p</returns>
-        private static double Recompenser(double[] p)
-        {
-            Debug.Assert(p.Length == RECOMPENSES.Length);
-
-            double resultat = 0;
-            for (int i = 0; i < p.Length; i++)
-            {
-                resultat += (RECOMPENSES[i] * p[i]);
-            }
-            return resultat;
-        }
-
-        /// <summary>
-        /// Calcule l'erreur entre une valeur cible et une valeur réelle
-        /// </summary>
-        /// <param name="valCible">Valeur à atteindre</param>
-        /// <param name="valReelle">Valeur obtenue</param>
-        /// <returns>La différence entre valCible et valReelle</returns>
-        private static double CalculerErreur(double valCible, double valReelle)
-        {
-            return (valCible - valReelle);
-        }
 
         /// <summary>
         /// Fait l'apprentissage en modifiant p pour atteindre CIBLE.
@@ -65,10 +27,10 @@ namespace ReseauNeurone
         /// <param name="p">Poids</param>
         private static void Apprendre(ref double[] p)
         {
-            Debug.Assert(p.Length == RECOMPENSES.Length);
+            Debug.Assert(p.Length == Environnement.NB_BOUTONS);
             
             // 1. Évaluer l'erreur courante :
-            double erreur = Evaluer(p);
+            double erreur = Environnement.CalculerErreur(p);
             if (erreur != 0)
             {
                 // 2. Une copie conforme des poids :
@@ -94,7 +56,7 @@ namespace ReseauNeurone
                 }
 
                 // 4. Est-ce qu'on diminue l'erreur ?
-                var nouvelleErreur = Evaluer(nouveauxPoids);
+                var nouvelleErreur = Environnement.CalculerErreur(nouveauxPoids);
                 if (Math.Abs(nouvelleErreur) < Math.Abs(erreur))
                 {
                     p = nouveauxPoids;
@@ -107,6 +69,8 @@ namespace ReseauNeurone
         /// </summary>
         static void Main()
         {
+            Debug.Assert(TAUX_APPRENTISSAGE > 0, "Le taux d'apprentissage doit être > 0");
+
             double[] poids = new double[] { 0, 0, 0, 0 };
             double erreur = double.MaxValue;
 
@@ -117,11 +81,11 @@ namespace ReseauNeurone
                 Apprendre(ref poids);
                 Console.WriteLine("[ " + string.Join(", ", poids) + " ]");
 
-                double recompense = Recompenser(poids);
-                erreur = CalculerErreur(CIBLE, recompense);
+                double recompense = Environnement.Recompenser(poids);
+                erreur = Environnement.CalculerErreur(poids);
 
-                Console.WriteLine("Résultat après : " + recompense);
-                Console.WriteLine("Erreur   après : " + erreur);
+                Console.WriteLine("Récompense : " + recompense);
+                Console.WriteLine("Erreur     : " + erreur);
                 Console.WriteLine();
                 Console.WriteLine();
             }
