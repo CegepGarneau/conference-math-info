@@ -6,11 +6,17 @@ using System.Text;
 
 namespace ReseauNeurone
 {
+    /// <summary>
+    /// Programme développé pour montré l'usage des mathématiques et de méthodes
+    /// numériques en intelligence artificielle, plus précisemment en réseaux 
+    /// de neurones.
+    /// </summary>
+    /// <see cref="https://becominghuman.ai/making-a-simple-neural-network-2ea1de81ec20"/>
     class Program
     {
-        private static readonly double[] RECOMPENSES = new double[] { 0, 0, 5, 12 };
+        private static readonly double[] RECOMPENSES = new double[] { 0, 0, 1, 1 };
 
-        private const double CIBLE              = 1.1;
+        private const double CIBLE              = 2;
         private const double TAUX_APPRENTISSAGE = 0.1;
 
         private static readonly Random Rnd = new Random();
@@ -61,13 +67,14 @@ namespace ReseauNeurone
         {
             Debug.Assert(p.Length == RECOMPENSES.Length);
             
-            double erreur = CalculerErreur(CIBLE, Recompenser(p));
+            // 1. Évaluer l'erreur courante :
+            double erreur = Evaluer(p);
             if (erreur != 0)
             {
-                // 2. Une copie conforme des poids
+                // 2. Une copie conforme des poids :
                 double[] nouveauxPoids = p.ToArray();
 
-                // 3. Modification d'un poids
+                // 3. Modification d'un poids :
                 int indice = Rnd.Next(0, p.Length);
                 if (erreur > 0)
                 {
@@ -87,7 +94,7 @@ namespace ReseauNeurone
                 }
 
                 // 4. Est-ce qu'on diminue l'erreur ?
-                var nouvelleErreur = CalculerErreur(CIBLE, Recompenser(nouveauxPoids));
+                var nouvelleErreur = Evaluer(nouveauxPoids);
                 if (Math.Abs(nouvelleErreur) < Math.Abs(erreur))
                 {
                     p = nouveauxPoids;
@@ -103,22 +110,17 @@ namespace ReseauNeurone
             double[] poids = new double[] { 0, 0, 0, 0 };
             double erreur = double.MaxValue;
 
-            for (int nbEssais = 0; (nbEssais < 50) && (erreur != 0); nbEssais++)
+            for (int numEssai = 0; (numEssai < 50) && (erreur != 0); numEssai++)
             {
-                Console.WriteLine("### Apprentissage " + nbEssais + " ###");
-                double resultat = Recompenser(poids);
-                erreur = CalculerErreur(CIBLE, resultat);
-
-                Console.WriteLine("Résultat avant : " + resultat);
-                Console.WriteLine("Erreur   avant : " + erreur);
+                Console.WriteLine("### Apprentissage " + numEssai + " ###");
 
                 Apprendre(ref poids);
                 Console.WriteLine("[ " + string.Join(", ", poids) + " ]");
 
-                resultat = Recompenser(poids);
-                erreur = CalculerErreur(CIBLE, resultat);
+                double recompense = Recompenser(poids);
+                erreur = CalculerErreur(CIBLE, recompense);
 
-                Console.WriteLine("Résultat après : " + resultat);
+                Console.WriteLine("Résultat après : " + recompense);
                 Console.WriteLine("Erreur   après : " + erreur);
                 Console.WriteLine();
                 Console.WriteLine();
