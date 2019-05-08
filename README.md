@@ -1,5 +1,5 @@
-# math-ia
-Un petit projet pour démontrer l'usage des mathématiques en intelligence artificielle.
+# conference-math-info
+Vous trouverez les projets ayant servis à une conférence sur l'utilisation des mathématiques en informatique.
 
 ## reseau.js ##
 Un petit réseau de neurone fait *à bras* en Javascript dans une page web.
