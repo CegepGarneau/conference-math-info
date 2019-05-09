@@ -14,12 +14,18 @@ namespace ReseauNeurone
     /// <see cref="https://becominghuman.ai/making-a-simple-neural-network-2ea1de81ec20"/>
     class Program
     {
+        private static readonly Random Rnd = new Random();
+
         /// <summary>
         /// Modifie la vitesse à laquelle l'apprentissage se fait. Doit être positif.
         /// </summary>
         private const double TAUX_APPRENTISSAGE = 0.1;
 
-        private static readonly Random Rnd = new Random();
+        /// <summary>
+        /// Le nombre d'essais pour l'apprentissage.
+        /// </summary>
+        private const double NB_ESSAIS = 50;
+
 
         /// <summary>
         /// Fait l'apprentissage en modifiant p pour atteindre CIBLE.
@@ -27,8 +33,6 @@ namespace ReseauNeurone
         /// <param name="p">Poids</param>
         private static void Apprendre(ref double[] p)
         {
-            Debug.Assert(p.Length == Environnement.NB_BOUTONS);
-            
             // 1. Évaluer l'erreur courante :
             double erreur = Environnement.CalculerErreur(p);
             if (erreur != 0)
@@ -36,8 +40,10 @@ namespace ReseauNeurone
                 // 2. Une copie conforme des poids :
                 double[] nouveauxPoids = p.ToArray();
 
-                // 3. Modification d'un poids :
+                // 3. Choisir un poids :
                 int indice = Rnd.Next(0, p.Length);
+
+                // 4. Modifier ce poids :
                 if (erreur > 0)
                 {
                     nouveauxPoids[indice] = p[indice] + TAUX_APPRENTISSAGE;
@@ -55,7 +61,7 @@ namespace ReseauNeurone
                     }
                 }
 
-                // 4. Est-ce qu'on diminue l'erreur ?
+                // 5. Est-ce qu'on diminue l'erreur ?
                 var nouvelleErreur = Environnement.CalculerErreur(nouveauxPoids);
                 if (Math.Abs(nouvelleErreur) < Math.Abs(erreur))
                 {
@@ -74,7 +80,7 @@ namespace ReseauNeurone
             double[] poids = new double[] { 0, 0, 0, 0 };
             double erreur = double.MaxValue;
 
-            for (int numEssai = 0; (numEssai < 50) && (erreur != 0); numEssai++)
+            for (int numEssai = 0; (numEssai < NB_ESSAIS) && (erreur != 0); numEssai++)
             {
                 Console.WriteLine("### Apprentissage " + numEssai + " ###");
 
