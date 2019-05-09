@@ -11,5 +11,5 @@ Inspiré de l'article [Making a Simple Neural Network](https://becominghuman.ai/
 ## DetectionContours
 Un petit programme en C# qui permet d'expérimenter avec les filtres de convolution et la détection de contours (filtre de Sobel, entre autres).
 
-##images
+## images
 Images utilisées pour tester les filtres de convolution.
